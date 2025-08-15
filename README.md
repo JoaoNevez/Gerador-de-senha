@@ -17,4 +17,10 @@ Uma aplicação simples e eficiente para gerar senhas seguras de forma personali
 <img width="1312" height="555" alt="image" src="https://github.com/user-attachments/assets/8d8c6caa-85d6-4b05-86c6-3042ba1a7ac3" />
 
 ## 📂 Estrutura do Projeto
+index.html: arquivo principal da aplicação
 
+style.css: estilos da interface
+
+script.js: lógica de geração das senhas
+
+gerador_senhas.zip: pacote para download
