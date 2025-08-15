@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Senhas Seguras</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+        body.dark {
+            --bg-color: #121212;
+            --text-color: #f5f5f5;
+            --card-bg: #1e1e1e;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 350px;
+            text-align: center;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        .senha {
+            background: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        body.dark .senha {
+            background: #333;
+        }
+        .forca {
+            height: 10px;
+            border-radius: 5px;
+            background: #ccc;
+            margin-top: 5px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .opcoes {
+            text-align: left;
+            margin: 10px 0;
+        }
+        .toggle-dark {
+            cursor: pointer;
+            background: #444;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔒 Gerador de Senhas Seguras</h2>
+
+        <label>Tamanho: <span id="tamanhoValor">12</span></label>
+        <input type="range" id="tamanho" min="4" max="32" value="12">
+
+        <div class="opcoes">
+            <label><input type="checkbox" id="letras" checked> Letras</label><br>
+            <label><input type="checkbox" id="numeros" checked> Números</label><br>
+            <label><input type="checkbox" id="simbolos" checked> Símbolos</label>
+        </div>
+
+        <div class="senha" id="senha">Clique em "Gerar Senha"</div>
+        <div class="forca" id="forca"></div>
+
+        <button class="btn" onclick="gerarSenha()">Gerar Senha</button>
+        <button class="btn" onclick="copiarSenha()">Copiar</button>
+        <button class="btn" onclick="baixarSenha()">Baixar .txt</button>
+        <button class="toggle-dark" onclick="toggleDark()">🌙 Dark Mode</button>
+    </div>
+
+    <script>
+        const tamanhoInput = document.getElementById('tamanho');
+        const tamanhoValor = document.getElementById('tamanhoValor');
+        const senhaEl = document.getElementById('senha');
+        const forcaEl = document.getElementById('forca');
+
+        tamanhoInput.addEventListener('input', () => {
+            tamanhoValor.textContent = tamanhoInput.value;
+        });
+
+        function gerarSenha() {
+            const letras = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const numeros = "0123456789";
+            const simbolos = "!@#$%^&*()_-+=<>?";
+
+            let caracteres = "";
+            if (document.getElementById('letras').checked) caracteres += letras;
+            if (document.getElementById('numeros').checked) caracteres += numeros;
+            if (document.getElementById('simbolos').checked) caracteres += simbolos;
+
+            if (caracteres === "") {
+                senhaEl.textContent = "Selecione ao menos uma opção.";
+                return;
+            }
+
+            let senha = "";
+            for (let i = 0; i < tamanhoInput.value; i++) {
+                senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+
+            senhaEl.textContent = senha;
+            verificarForca(senha);
+        }
+
+        function verificarForca(senha) {
+            let pontuacao = 0;
+            if (senha.length >= 8) pontuacao++;
+            if (/[A-Z]/.test(senha)) pontuacao++;
+            if (/[0-9]/.test(senha)) pontuacao++;
+            if (/[^A-Za-z0-9]/.test(senha)) pontuacao++;
+
+            const cores = ["#ff4d4d", "#ffa64d", "#ffff4d", "#85e085", "#33cc33"];
+            forcaEl.style.width = ((pontuacao / 4) * 100) + "%";
+            forcaEl.style.background = cores[pontuacao];
+        }
+
+        function copiarSenha() {
+            navigator.clipboard.writeText(senhaEl.textContent)
+                .then(() => alert("Senha copiada!"))
+                .catch(() => alert("Erro ao copiar."));
+        }
+
+        function baixarSenha() {
+            const blob = new Blob([senhaEl.textContent], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "senha.txt";
+            link.click();
+        }
+
+        function toggleDark() {
+            document.body.classList.toggle('dark');
+        }
+    </script>
+</body>
+</html>
